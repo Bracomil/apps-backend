@@ -11,3 +11,4 @@ postgres-data
 bling-jwt-tokens.json
 bling-bhc-jwt-tokens.json
 github_token.txt
+.DS_Store
