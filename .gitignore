@@ -1,0 +1,13 @@
+.git
+.env
+.bhc.env
+*.md
+bin
+tmp
+coverage
+.vscode
+.idea
+postgres-data
+bling-jwt-tokens.json
+bling-bhc-jwt-tokens.json
+github_token.txt

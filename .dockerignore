@@ -1,0 +1,16 @@
+.git
+.gitignore
+.env
+.bhc.env
+*.md
+bin
+tmp
+coverage
+.vscode
+.idea
+docker-compose*.yml
+Dockerfile
+postgres-data
+bling-jwt-tokens.json
+bling-bhc-jwt-tokens.json
+github_token.txt
