@@ -3,6 +3,7 @@
 FROM golang:1.26-alpine AS builder
 RUN apk add --no-cache git ca-certificates
 WORKDIR /app
+ENV GOPRIVATE=github.com/bracomil/*
 COPY go.mod go.sum ./
 RUN --mount=type=secret,id=github_token,env=GITHUB_TOKEN \
     git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/" && \
