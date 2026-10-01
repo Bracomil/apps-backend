@@ -7,8 +7,6 @@ migrate-down:
 migrate-version:
 	migrate -path cmd/internal/db/migrations -database "postgres://bracomil-api:troque_isso_em_prod@localhost:5432/bracomil-api?sslmode=disable" version
 
-db-cli
-
 ifeq ($(firstword $(MAKECMDGOALS)),migrate-force)
   # Captura o argumento que vem depois de migrate-force
   VERSION := $(word 2,$(MAKECMDGOALS))
