@@ -9,6 +9,7 @@ import (
 	"github.com/bracomil/bracomil-internal-api-back/cmd/internal/auth"
 	"github.com/bracomil/bracomil-internal-api-back/cmd/internal/bling"
 	"github.com/bracomil/bracomil-internal-api-back/cmd/internal/db"
+	"github.com/bracomil/bracomil-internal-api-back/cmd/internal/ofx"
 	permission "github.com/bracomil/bracomil-internal-api-back/cmd/internal/permissions"
 	"github.com/bracomil/bracomil-internal-api-back/cmd/internal/user"
 	"github.com/bracomil/bracomil-internal-api-back/cmd/middlewares"
@@ -55,6 +56,7 @@ func Setup(log *logger.Logger, db *db.DB, app *fiber.App) error {
 	jwtIssuer := auth.NewJWTIssuer("AUTH_SECRET", os.Getenv("HOST"), 24*time.Hour)
 	authService := auth.NewService(userService, permissionRepository, googleVerifier, jwtIssuer)
 	authHandler := auth.NewHandler(log, authService)
+	ofxHandler := ofx.NewHandler(log)
 
 	// Auth Middleware
 	authMiddleware := middlewares.NewAuthorizationMiddleware(jwtIssuer, userRepository, permissionRepository)
@@ -76,5 +78,7 @@ func Setup(log *logger.Logger, db *db.DB, app *fiber.App) error {
 	// Bling Routes
 	protected.Get("/bling/contas/receber", blingHandler.ListReceivables)
 	protected.Post("/bling/contas/receber/baixar", blingHandler.SettleBatchReceipts)
+	// OFX Routes
+	protected.Post("/ofx/parse", ofxHandler.ParseFile)
 	return nil
 }
