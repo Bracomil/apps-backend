@@ -99,7 +99,23 @@ func NewOAuth2Manager(
 		opt(manager)
 	}
 
+	manager.loadTokens()
+
 	return manager, nil
+}
+
+func (m *OAuth2Manager) loadTokens() {
+	tokens, _ := m.storage.Load(context.Background())
+
+	m.tokens.AccessToken = Token{
+		Value:    tokens.AccessToken,
+		ExpireAt: tokens.CreatedAt.Add(time.Duration(tokens.ExpiresIn)),
+	}
+	m.tokens.AccessToken = Token{
+		Value:    tokens.RefreshToken,
+		ExpireAt: tokens.ExpiresAt,
+	}
+
 }
 
 func WithLimiter(l *rate.Limiter) Option {
