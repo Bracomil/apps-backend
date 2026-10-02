@@ -1,7 +1,6 @@
 package tokenmanager
 
 import (
-	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -9,7 +8,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -259,21 +260,26 @@ func (m *OAuth2Manager) RequestTokensWithRefreshToken(ctx context.Context, refre
 }
 
 func (m *OAuth2Manager) requestTokens(ctx context.Context, reqBody RequestTokenReq) (GetTokensResponse, error) {
-	body, err := json.Marshal(reqBody)
-	if err != nil {
-		return GetTokensResponse{}, fmt.Errorf("%w, %v", ErrMarshallingData, err)
+	form := url.Values{}
+	form.Set("grant_type", reqBody.GrantType)
+	switch reqBody.GrantType {
+	case "refresh_token":
+		form.Set("refresh_token", reqBody.RefreshToken)
+	case "authorization_code":
+		form.Set("code", reqBody.Code)
 	}
 
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodPost,
 		m.providerUrl+"/oauth/token",
-		bytes.NewReader(body),
+		strings.NewReader(form.Encode()),
 	)
 	if err != nil {
 		return GetTokensResponse{}, fmt.Errorf("new request: %w", err)
 	}
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("Accept", "1.0")
 	req.Header.Set("enable-jwt", "1")
 
 	// base64 encoding of client_id:client_secret
