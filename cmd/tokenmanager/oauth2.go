@@ -105,7 +105,12 @@ func NewOAuth2Manager(
 }
 
 func (m *OAuth2Manager) loadTokens() {
-	tokens, _ := m.storage.Load(context.Background())
+	tokens, err := m.storage.Load(context.Background())
+	// Ignore error
+	if err != nil {
+		m.log.Error("Failed to load tokens", err)
+		return
+	}
 
 	m.tokens.AccessToken = Token{
 		Value:    tokens.AccessToken,
