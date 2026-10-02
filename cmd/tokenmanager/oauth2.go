@@ -116,9 +116,9 @@ func (m *OAuth2Manager) loadTokens() {
 		Value:    tokens.AccessToken,
 		ExpireAt: tokens.CreatedAt.Add(time.Duration(tokens.ExpiresIn)),
 	}
-	m.tokens.AccessToken = Token{
+	m.tokens.RefreshToken = Token{
 		Value:    tokens.RefreshToken,
-		ExpireAt: tokens.ExpiresAt,
+		ExpireAt: tokens.CreatedAt.Add(m.refreshTokenTTL),
 	}
 
 }
